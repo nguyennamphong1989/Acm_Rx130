@@ -1,0 +1,41 @@
+/*
+ * gpio.h
+ *
+ *  Created on: Jul 29, 2022
+ *      Author: Lover_boy_9x
+ */
+
+#ifndef APPS_GPIO_GPIO_H_
+#define APPS_GPIO_GPIO_H_
+
+#include "r_gpio_rx_if.h"
+
+#define 	BUZZER_ON               R_GPIO_PinWrite(GPIO_PORT_A_PIN_0, GPIO_LEVEL_HIGH);
+#define 	BUZZER_OFF              R_GPIO_PinWrite(GPIO_PORT_A_PIN_0, GPIO_LEVEL_LOW);
+
+#define     TURN_ON_LED_AIRC1		R_GPIO_PinWrite(GPIO_PORT_A_PIN_1, GPIO_LEVEL_LOW);
+#define     TURN_OFF_LED_AIRC1		R_GPIO_PinWrite(GPIO_PORT_A_PIN_1, GPIO_LEVEL_HIGH);
+
+#define     TURN_ON_LED_AIRC2		R_GPIO_PinWrite(GPIO_PORT_H_PIN_2, GPIO_LEVEL_LOW);
+#define     TURN_OFF_LED_AIRC2		R_GPIO_PinWrite(GPIO_PORT_H_PIN_2, GPIO_LEVEL_HIGH);
+
+#define     TURN_ON_LED_AIRC3		R_GPIO_PinWrite(GPIO_PORT_C_PIN_2, GPIO_LEVEL_LOW);
+#define     TURN_OFF_LED_AIRC3		R_GPIO_PinWrite(GPIO_PORT_C_PIN_2, GPIO_LEVEL_HIGH);
+
+#define     TURN_ON_LED_AIRC4		R_GPIO_PinWrite(GPIO_PORT_C_PIN_3, GPIO_LEVEL_LOW);
+#define     TURN_OFF_LED_AIRC4		R_GPIO_PinWrite(GPIO_PORT_C_PIN_3, GPIO_LEVEL_HIGH);
+
+#define     TURN_ON_LED_FAN			R_GPIO_PinWrite(GPIO_PORT_A_PIN_3, GPIO_LEVEL_LOW);
+#define     TURN_OFF_LED_FAN		R_GPIO_PinWrite(GPIO_PORT_A_PIN_3, GPIO_LEVEL_HIGH);
+
+#define     TURN_ON_LED_PW			R_GPIO_PinWrite(GPIO_PORT_A_PIN_4, GPIO_LEVEL_LOW);
+#define     TURN_OFF_LED_PW			R_GPIO_PinWrite(GPIO_PORT_A_PIN_4, GPIO_LEVEL_HIGH);
+
+#define     TURN_ON_FAN				R_GPIO_PinWrite(GPIO_PORT_4_PIN_0, GPIO_LEVEL_HIGH);
+#define     TURN_OFF_FAN			R_GPIO_PinWrite(GPIO_PORT_4_PIN_0, GPIO_LEVEL_LOW);
+
+#define BTN1_Pin	GPIO_PORT_B_PIN_7
+#define BTN2_Pin	GPIO_PORT_B_PIN_6
+#define BTN3_Pin 	GPIO_PORT_B_PIN_0
+#define BTN4_Pin	GPIO_PORT_A_PIN_6
+#endif /* APPS_GPIO_GPIO_H_ */
