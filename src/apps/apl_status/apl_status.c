@@ -12,6 +12,7 @@
 #include "Config_RIIC0.h"
 #include "gpio.h"
 
+#define AIR_MAX_SITE 25 // 25:Site cấp 2 , 27:Site cấp 3
 
 #define HUM_THRESHOLD 80
 #define HUM_DEBOUCH 2
@@ -94,8 +95,9 @@ void Checkstt(uint8_t processingAC, uint8_t *acStatus)
 	{
 		if(s_needSendAcData[processingAC].ac_powerModeCmd == AC_POWER_ON)
 		{
-			if((air1_max - air1_min > 2 && air1TempAtSet >= air1_min )
-					|| (air1_max - air1_min <= 2 && air1_max <= 26 && p_stt->temp_indoor - air1_min >= 1))
+			if((air1_max - air1_min > 2 && air1TempAtSet > air1_min && air1_min <= p_stt->temp_indoor)
+					|| (air1_max - air1_min > 2 && air1TempAtSet == air1_min && air1_max <= AIR_MAX_SITE+2)
+					|| (air1_max - air1_min <= 2 && air1_max <= AIR_MAX_SITE+1 && p_stt->temp_indoor - air1_min >= 0))
 				*acStatus= AC_POWER_ON;
 			else
 			{
@@ -105,7 +107,7 @@ void Checkstt(uint8_t processingAC, uint8_t *acStatus)
 		else if(s_needSendAcData[processingAC].ac_powerModeCmd == AC_POWER_OFF)
 		{
 			if((air1_max - air1_min > 2 && air1TempAtSet < air1_max )
-					|| (air1_max - air1_min <= 2 && air1_min >= 24 && air2_min <= air1_min ))
+					|| (air1_max - air1_min <= 2 && air1_min >= AIR_MAX_SITE-1 && air2_min <= air1_min ))
 				*acStatus= AC_POWER_OFF;
 			else
 			{
@@ -117,8 +119,9 @@ void Checkstt(uint8_t processingAC, uint8_t *acStatus)
 	{
 		if(s_needSendAcData[processingAC].ac_powerModeCmd == AC_POWER_ON)
 		{
-			if((air2_max - air2_min > 2 && air2TempAtSet >= air2_min )
-					|| (air2_max - air2_min <= 2 && air2_max <= 26 && p_stt->temp_indoor - air2_min >= 1))
+			if((air2_max - air2_min > 2 && air2TempAtSet > air2_min && air2_min <= p_stt->temp_indoor)
+					|| (air2_max - air2_min > 2 && air2TempAtSet == air2_min && air2_max <= AIR_MAX_SITE+2)
+					|| (air2_max - air2_min <= 2 && air2_max <= AIR_MAX_SITE+1 && p_stt->temp_indoor - air2_min >= 0))
 				*acStatus= AC_POWER_ON;
 			else
 			{
@@ -128,7 +131,7 @@ void Checkstt(uint8_t processingAC, uint8_t *acStatus)
 		else if(s_needSendAcData[processingAC].ac_powerModeCmd == AC_POWER_OFF)
 		{
 			if((air2_max - air2_min > 2 && air2TempAtSet < air2_max )
-					|| (air2_max - air2_min <= 2 && air2_min >= 24 && air1_min <= air2_min))
+					|| (air2_max - air2_min <= 2 && air2_min >= AIR_MAX_SITE-1 && air1_min <= air2_min))
 				*acStatus= AC_POWER_OFF;
 			else
 			{
@@ -146,6 +149,7 @@ void CheckError()
 	{
 		if (enterModeErrorAuto) //khi mode auto vao che do loi bat ca 2 dieu hoa che do 4
 		{
+
 			if (elapsedTime(g_sysTime, time_samplingTemp[AIRC1_ID]) > 60000) //1min lưu lại nhiệt độ min
 			{
 				time_samplingTemp[AIRC1_ID] = g_sysTime;
@@ -192,7 +196,7 @@ void CheckError()
 			}
 
 
-			//Ra quyet dinh 10p/lan
+			//Ra quyet dinh 20p/lan
 			if (elapsedTime(g_sysTime, timeCountErrorAuto_1) > 1200000) //20 mins
 			{
 				timeCountErrorAuto_1 = g_sysTime;
@@ -209,7 +213,7 @@ void CheckError()
 				}
 			}
 
-			if (elapsedTime(g_sysTime, timeCountErrorAuto_2) > 600000)//10min
+			if (elapsedTime(g_sysTime, timeCountErrorAuto_2) > 1200000)//20min
 			{
 				timeCountErrorAuto_2 = g_sysTime;
 				Checkstt(AIRC2_ID, &acStatus);// Kiểm tra status theo nhiệt độ
@@ -234,53 +238,6 @@ void CheckError()
 	            {
 	            	timeStartAuto = g_sysTime;
 
-//	            	//AC1
-//	            	if(g_status_airc.temp_air_1>=previous1)
-//	            	{
-//	            		higherTempCnt1++;
-//	            	}
-//	            	else
-//	            	{
-//	            		higherTempCnt1=0;
-//	            	}
-//	            	previous1=g_status_airc.temp_air_1;
-//
-//	            	if(higherTempCnt1>20 && g_status_airc.temp_air_1> 28) //20 phut lien tiep nhiet do khong giam
-//	            	{
-//	            		if(s_needSendAcData[AIRC1_ID].ac_powerModeCmd == AC_POWER_ON)
-//	            		{
-//		                    error_air[AIRC1_ID] |= 0xFF00;
-//		                    APL_stt_processErrorAuto();
-//	            		}
-//	            		else //AC_POWER_OFF
-//	            		{
-//	            			error_air[AIRC1_ID] &= ~0xFF00;// Xóa lỗi
-//	            		}
-//	            	}
-//
-//	            	//AC2
-//	            	if(g_status_airc.temp_air_2>=previous2)
-//	            	{
-//	            		higherTempCnt2++;
-//	            	}
-//	            	else
-//	            	{
-//	            		higherTempCnt2=0;
-//	            	}
-//	            	previous2=g_status_airc.temp_air_2;
-//
-//	            	if(higherTempCnt2>20 && g_status_airc.temp_air_1> 28) //15 phut lien tiep nhiet do khong giam
-//	            	{
-//	            		if(s_needSendAcData[AIRC2_ID].ac_powerModeCmd == AC_POWER_ON)
-//	            		{
-//	            			error_air[AIRC2_ID] |= 0xFF00; //Ghi lỗi AC2
-//	            			APL_stt_processErrorAuto();
-//	            		}
-//	            		else
-//	            		{
-//	            			error_air[AIRC2_ID] &= ~0xFF00;// Xóa lỗi
-//	            		}
-//	            	}
 	            	//AC1
 	            	if(s_needSendAcData[AIRC1_ID].ac_powerModeCmd == AC_POWER_ON)
 	            	{
@@ -294,7 +251,7 @@ void CheckError()
 						}
 						previous1=g_status_airc.temp_air_1;
 
-						if(higherTempCnt1>20 && g_status_airc.temp_air_1> 25) //20 phut lien tiep nhiet do khong giam & nhiet do cua gio >25
+						if((higherTempCnt1>20 && g_status_airc.temp_air_1> AIR_MAX_SITE) || g_status_airc.temp_air_1 >= AIR_MAX_SITE+4) //20 phut lien tiep nhiet do khong giam & nhiet do cua gio >25
 						{
 							error_air[AIRC1_ID] |= 0xFF00;
 							APL_stt_processErrorAuto();
@@ -340,7 +297,7 @@ void CheckError()
 						}
 						previous2=g_status_airc.temp_air_2;
 
-						if(higherTempCnt2>20 && g_status_airc.temp_air_2> 25) //20 phut lien tiep nhiet do khong giam & nhiet do cua gio >25
+						if((higherTempCnt2>20 && g_status_airc.temp_air_2> AIR_MAX_SITE) || g_status_airc.temp_air_2 >= AIR_MAX_SITE+4) //20 phut lien tiep nhiet do khong giam & nhiet do cua gio >25
 						{
 							error_air[AIRC2_ID] |= 0xFF00;
 							APL_stt_processErrorAuto();
@@ -573,6 +530,7 @@ void APL_stt_processRetry()
 				&& !enterModeErrorAuto)
 		{
 			time_samplingTemp[processingAC] = g_sysTime;
+
 			if(processingAC == AIRC1_ID)
 			{
 				if(g_status_airc.temp_air_1 < air1_min)
@@ -616,10 +574,37 @@ void APL_stt_processRetry()
 				previous2=g_status_airc.temp_air_2;
 			}
 		}
+		//Sau khi nhận lênh 15p kiểm tra xem nhiệt độ có quá AIR_MAX_SITE+4
+		if ((s_needCheckAcs[processingAC] //s_needCheckAcs set khi điều khiển 2 điều hòa APL_stt_controlBothAc
+			&&  (elapsedTime(g_sysTime, time_samplingTemp[processingAC]) > (15*60*1000)))
+				&& !enterModeErrorAuto)
+		{
+			//Qúa nhiệt vào chế độ lỗi ngay không chờ 40p
+			if(s_needSendAcData[processingAC].ac_powerModeCmd == AC_POWER_ON)
+			{
+				if(g_status_airc.temp_air_1 >= AIR_MAX_SITE+4)
+				{
+					error_air[AIRC1_ID] |= 0xFF00;
+					//Khi lỗi set sts 2 điều hòa = 0
+					g_status_airc.air1_sts =0;
+					g_status_airc.air2_sts =0;
+					s_needCheckAcs[processingAC] = false;
+					APL_stt_processErrorAuto();
+				}
+				if(g_status_airc.temp_air_2 >= AIR_MAX_SITE+4)
+				{
+					error_air[AIRC2_ID] |= 0xFF00;
+					//Khi lỗi set sts 2 điều hòa = 0
+					g_status_airc.air1_sts =0;
+					g_status_airc.air2_sts =0;
+					s_needCheckAcs[processingAC] = false;
+					APL_stt_processErrorAuto();
+				}
+			}
+		}
 
-
-		//sau khi nhận lệnh điều khiển 2 điều hòa APL_stt_controlBothAc, sau 20 phút kiểm tra nhiệt độ
-		if ((s_needCheckAcs[processingAC] &&  (elapsedTime(g_sysTime, s_timeSendControlAcs[processingAC]) > (20*60*1000)))
+		//sau khi nhận lệnh điều khiển 2 điều hòa APL_stt_controlBothAc, sau 40 phút kiểm tra nhiệt độ
+		if ((s_needCheckAcs[processingAC] &&  (elapsedTime(g_sysTime, s_timeSendControlAcs[processingAC]) > (40*60*1000)))
 				&& !enterModeErrorAuto)
 		{
 
@@ -657,6 +642,9 @@ void APL_stt_processRetry()
 					if (count_air1 >= 1)//không retry
 					{
 						error_air[AIRC1_ID] |= 0xFF00;
+						//Khi lỗi set sts 2 điều hòa = 0
+						g_status_airc.air1_sts =0;
+						g_status_airc.air2_sts =0;
 						s_needCheckAcs[processingAC] = false;
 						APL_stt_processErrorAuto();
 
@@ -676,6 +664,8 @@ void APL_stt_processRetry()
 					if (count_air2 >= 1)//không retry
 					{
 						error_air[AIRC2_ID] |= 0xFF00;
+						g_status_airc.air1_sts =0;
+						g_status_airc.air2_sts =0;
 						s_needCheckAcs[processingAC] = false;
 						APL_stt_processErrorAuto();
 					}

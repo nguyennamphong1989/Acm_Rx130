@@ -55,6 +55,8 @@ typedef struct {
     uint16_t air3_sts;
     uint16_t air4_sts;
 
+
+
 } AIRC_STATUS_t;     // 14 x 2 bytes
 
 enum {
