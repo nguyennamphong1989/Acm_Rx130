@@ -320,8 +320,6 @@ void CheckError()
 						}
 						previous2=g_status_airc.temp_air_2;
 
-
-
 						if(lowerTempCnt2 > 1) //nhiet độ cửa gió giảm 2 phút liên tiếp
 						{
 							error_air[AIRC2_ID] |= 0xFF00;
@@ -575,27 +573,23 @@ void APL_stt_processRetry()
 			}
 		}
 		//Sau khi nhận lênh 15p kiểm tra xem nhiệt độ có quá AIR_MAX_SITE+4
-		if ((s_needCheckAcs[processingAC] //s_needCheckAcs set khi điều khiển 2 điều hòa APL_stt_controlBothAc
-			&&  (elapsedTime(g_sysTime, time_samplingTemp[processingAC]) > (15*60*1000)))
+		if ((s_needCheckAcs[processingAC]
+			&&  (elapsedTime(g_sysTime, s_timeSendControlAcs[processingAC]) > (15*60*1000)))
 				&& !enterModeErrorAuto)
 		{
 			//Qúa nhiệt vào chế độ lỗi ngay không chờ 40p
 			if(s_needSendAcData[processingAC].ac_powerModeCmd == AC_POWER_ON)
 			{
-				if(g_status_airc.temp_air_1 >= AIR_MAX_SITE+4)
+				if(processingAC == AIRC1_ID && g_status_airc.temp_air_1 >= AIR_MAX_SITE+4)
 				{
 					error_air[AIRC1_ID] |= 0xFF00;
-					//Khi lỗi set sts 2 điều hòa = 0
 					g_status_airc.air1_sts =0;
-					g_status_airc.air2_sts =0;
 					s_needCheckAcs[processingAC] = false;
 					APL_stt_processErrorAuto();
 				}
-				if(g_status_airc.temp_air_2 >= AIR_MAX_SITE+4)
+				if(processingAC == AIRC2_ID && g_status_airc.temp_air_2 >= AIR_MAX_SITE+4)
 				{
 					error_air[AIRC2_ID] |= 0xFF00;
-					//Khi lỗi set sts 2 điều hòa = 0
-					g_status_airc.air1_sts =0;
 					g_status_airc.air2_sts =0;
 					s_needCheckAcs[processingAC] = false;
 					APL_stt_processErrorAuto();
@@ -604,7 +598,8 @@ void APL_stt_processRetry()
 		}
 
 		//sau khi nhận lệnh điều khiển 2 điều hòa APL_stt_controlBothAc, sau 40 phút kiểm tra nhiệt độ
-		if ((s_needCheckAcs[processingAC] &&  (elapsedTime(g_sysTime, s_timeSendControlAcs[processingAC]) > (40*60*1000)))
+		if ((s_needCheckAcs[processingAC]
+			&&  (elapsedTime(g_sysTime, s_timeSendControlAcs[processingAC]) > (40*60*1000)))
 				&& !enterModeErrorAuto)
 		{
 
@@ -642,9 +637,7 @@ void APL_stt_processRetry()
 					if (count_air1 >= 1)//không retry
 					{
 						error_air[AIRC1_ID] |= 0xFF00;
-						//Khi lỗi set sts 2 điều hòa = 0
 						g_status_airc.air1_sts =0;
-						g_status_airc.air2_sts =0;
 						s_needCheckAcs[processingAC] = false;
 						APL_stt_processErrorAuto();
 
@@ -664,7 +657,6 @@ void APL_stt_processRetry()
 					if (count_air2 >= 1)//không retry
 					{
 						error_air[AIRC2_ID] |= 0xFF00;
-						g_status_airc.air1_sts =0;
 						g_status_airc.air2_sts =0;
 						s_needCheckAcs[processingAC] = false;
 						APL_stt_processErrorAuto();
