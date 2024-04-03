@@ -448,6 +448,9 @@ void APL_stt_processErrorAuto()
 
 	s_needSendAcData[AIRC1_ID].ac_powerModeCmd = AC_POWER_ON;
 	s_needSendAcData[AIRC2_ID].ac_powerModeCmd = AC_POWER_ON;
+
+	if(error_air[AIRC1_ID] == 0)  g_status_airc.air1_sts = 1;
+	if(error_air[AIRC2_ID] == 0)  g_status_airc.air2_sts = 1;
 }
 
 
