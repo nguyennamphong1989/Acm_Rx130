@@ -205,29 +205,47 @@ void CheckError()
 				if(acStatus==AC_POWER_OFF)
 				{
 					error_air[AIRC1_ID] |= 0xFF00; //Ghi lỗi AC1
-					APL_stt_processErrorAuto();
+//					APL_stt_processErrorAuto();
 				}
 				else
 				{
 					error_air[AIRC1_ID] &= ~0xFF00; //Xoa loi
 				}
-			}
 
-			if (elapsedTime(g_sysTime, timeCountErrorAuto_2) > 1200000)//20min
-			{
-				timeCountErrorAuto_2 = g_sysTime;
 				Checkstt(AIRC2_ID, &acStatus);// Kiểm tra status theo nhiệt độ
 				g_status_airc.air2_sts = acStatus; //Cập nhật status ON/OFF thực tế
 				if(acStatus==AC_POWER_OFF)
 				{
 					error_air[AIRC2_ID] |= 0xFF00; //Ghi lỗi AC1
-					APL_stt_processErrorAuto();
+//					APL_stt_processErrorAuto();
 				}
 				else
 				{
 					error_air[AIRC2_ID] &= ~0xFF00; //Xoa loi
 				}
+
+				if(error_air[AIRC1_ID] == 0xFF00 || error_air[AIRC2_ID] == 0xFF00)
+				{
+
+					APL_stt_processErrorAuto();
+				}
 			}
+
+//			if (elapsedTime(g_sysTime, timeCountErrorAuto_2) > 1200000)//20min
+//			{
+//				timeCountErrorAuto_2 = g_sysTime;
+//				Checkstt(AIRC2_ID, &acStatus);// Kiểm tra status theo nhiệt độ
+//				g_status_airc.air2_sts = acStatus; //Cập nhật status ON/OFF thực tế
+//				if(acStatus==AC_POWER_OFF)
+//				{
+//					error_air[AIRC2_ID] |= 0xFF00; //Ghi lỗi AC1
+//					APL_stt_processErrorAuto();
+//				}
+//				else
+//				{
+//					error_air[AIRC2_ID] &= ~0xFF00; //Xoa loi
+//				}
+//			}
 		}
 		else //không trong ModeError
 		{
